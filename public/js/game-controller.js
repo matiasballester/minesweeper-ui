@@ -1,11 +1,11 @@
 var app = angular.module('configSettings', []);
 app.constant('configSettings', {
-	'startGameApiEndpoint': 'http://localhost:5000/minesweeper/startGame',
-	'addFlagApiEndpoint': 'http://localhost:5000/minesweeper/addFlag',
-	'playGameApiEndpoint': 'http://localhost:5000/minesweeper/playGame',
-	'gamesApiEndpoint': 'http://localhost:5000/minesweeper/games/',
-	'userGamesApiEndpoint': 'http://localhost:5000/minesweeper/games/user/',
-	'gameApiEndpoint': 'http://localhost:5000/minesweeper/game/'
+	'startGameApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/startGame',
+	'addFlagApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/addFlag',
+	'playGameApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/playGame',
+	'gamesApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/games/',
+	'userGamesApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/games/user/',
+	'gameApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/game/'
  }); 
 
 (function(angular) {
