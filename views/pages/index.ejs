@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<title>Minesweeper Game</title>
+		<meta charset="UTF-8"/>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+		<link rel="stylesheet" href="/styles/game.css"/>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	</head>
+
+	<body ng-app="ngAppMinesweeperGame">
+		<div class="container" ng-controller="ngAppMinesweeperGameController">
+            <div style="margin-bottom: 40px;">
+                <div class="text-left">
+                    <h1 class="display-4">The Minesweeper <i class="fa fa-bomb" style="font-size:36px"></i></h1>
+                </div>
+            </div>
+			<div>
+                <div class="row">
+                    <div style="width: 50px; margin-right: 2px;">
+                        Player:
+                    </div>
+                    <div class="col-md-10">
+                        <input type="text" class="my-form-control" style="width: 200px;" ng-model="username" ng-disabled="userLogged"/>
+                        <button ng-show="!userLogged" ng-click="login()" class="btn btn-success btn-sm">Login</button>
+                        <button ng-show="userLogged"ng-click="logout()" class="btn btn-danger btn-sm">Logout</button>
+                    </div>
+                </div>
+                <hr class="my-4">
+                <div ng-show="showGames" class="" id="games">
+                    <div class="col-md-10" style="text-align: left; margin-bottom: 10px;">
+                        <button ng-click="newConfiguration()" style="padding: 0px 5px;" class="btn btn-primary">Configure a new game</button>
+                    </div>
+                    <div class="row">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Start Date</th>
+                                    <th scope="col">End Date</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr scope="row" ng-repeat="game in games">
+                                    <td>{{game.startTime}}</td>
+                                    <td>{{game.endTime}}</td>
+                                    <td>{{game.state}}</td>
+                                    <td><a ng-if="game.state == 'ACTIVE'" href="#" ng-click="resume(game.id)">resume</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr class="my-4">
+                </div>
+                <div ng-show="showNewGame" class="" style="margin-top: 30px;" id="newGame">
+                    <div class="row">
+                        <div class="container" style="margin-top: 30px;">
+                            <div class="row" style="margin-bottom: 20px;">
+                                <span class="">Configure your board</span>
+                            </div>
+                            <div class="row" style="margin-top: 5px;">
+                                <div style="width: 100px; margin-right: 2px;">
+                                    Rows:
+                                </div>
+                                <div class="col-md-10"><input type="number" ng-disabled="disableBoardConfiguration" class="my-form-control" style="width: 100px;" ng-model="rows"/></div>
+                            </div>
+                            <div class="row" style="margin-top: 5px;">
+                                <div style="width: 100px; margin-right: 2px;">
+                                    Columns:
+                                </div>
+                                <div class="col-md-10"><input type="number" ng-disabled="disableBoardConfiguration" class="my-form-control" style="width: 100px;" ng-model="cols"/></div>
+                            </div>
+                            <div class="row" style="margin-top: 5px;">
+                                <div style="width: 100px; margin-right: 2px;">
+                                    Mines:
+                                </div>
+                                <div class="col-md-10"><input type="number" ng-disabled="disableBoardConfiguration" class="my-form-control" style="width: 100px;" ng-model="mines"/></div>
+                            </div>
+                            <div class="row" style="margin: 10px;">
+                                <div class="col-md-10" style="text-align: left; margin-left: 75px;">
+                                    <button ng-click="startGame()" ng-disabled="disableBoardConfiguration" style="padding: 0px 5px;" class="btn btn-primary">Start game</button>
+                                    <button ng-click="showGames = true; showNewGame = false; loadUserGames();" ng-disabled="disableBoardConfiguration" style="padding: 0px 5px;" class="btn btn-info">Check my games</button>
+                                    &nbsp;&nbsp;
+                                    <span class="badge badge-secondary">{{gameState}}</span>
+                                    &nbsp;&nbsp;
+                                    <span class="badge badge-info">{{timeSpent}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 20px;">
+                        <table class="game-table">
+                            <tbody>
+                                <tr ng-repeat="row in game.board" ng-class="{'table-disabled': loadingGame}">
+                                    <td height="40px" width="40px" 
+                                        ng-repeat="col in row" 
+                                        ng-class="{mine: col.revealed == true && col.mined == true,
+                                                    revealed: col.revealed == true, 
+                                                    notrevealed: col.revealed == false, 
+                                                    flagged: col.revealed == false && col.flagged == true}" 
+                                        ng-mouseup="cellClick($event, col.row, col.col)"
+                                        oncontextmenu="return false">
+                                        <span ng-if="col.revealed == true && col.minesNear > 0 && col.mined == false">{{col.minesNear}}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>    
+		</div>
+	</body>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+	
+		<script type="text/javascript" src="/js/game-controller.js"></script>
+
+</html>

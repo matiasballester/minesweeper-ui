@@ -1,0 +1,39 @@
+.game-table td {
+	overflow: hidden;
+	border: 1px solid;
+	border-color: #d2d2d2 #757575 #757575 #d2d2d2;
+	cursor: pointer;
+	text-align: center; 
+	white-space: nowrap;
+}
+
+.revealed {
+	background-color: #9e9a9a;
+}
+
+.notrevealed {
+	background-color: #5a5656;
+}
+
+.mine {
+	background-color: #9e9a9a;
+	background-image: url("mine.png");
+	background-repeat: no-repeat;
+	background-size: 20px 20px;
+	background-position: center;
+}
+
+.flagged {
+	background-color: #5a5656;
+	background-image: url("flag.png");
+	background-repeat: no-repeat;
+	background-size: 20px 20px;
+	background-position: center;
+}
+
+.my-form-control {
+	border: 1px solid lightgrey;
+	border-radius: 5px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
