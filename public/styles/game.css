@@ -31,9 +31,13 @@
 	background-position: center;
 }
 
-.my-form-control {
+.form-control {
 	border: 1px solid lightgrey;
 	border-radius: 5px;
 	padding-top: 0px;
 	padding-bottom: 0px;
+}
+
+.row {
+	margin: 5px;
 }

@@ -1,68 +1,100 @@
 var app = angular.module('configSettings', []);
 app.constant('configSettings', {
+	'createUserApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/createUser',
+	'authenticateUserApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/authenticateUser/',
 	'startGameApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/startGame',
 	'addFlagApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/addFlag',
 	'playGameApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/playGame',
 	'gamesApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/games/',
-	'userGamesApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/games/user/',
-	'gameApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/game/'
+	'userGamesApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/games/users/'
  }); 
 
 (function(angular) {
   'use strict';
 angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMinesweeperGameController', function($scope, $http, $interval, configSettings) {
 	$scope.username = '';
-	$scope.rows = 2;
-	$scope.cols = 2;
-	$scope.mines = 2;
+	$scope.password = '';
+	$scope.userId = '';
+	$scope.gameId = '';
 
-	$scope.loadingGame = false;
-	$scope.flagToggleOn = false;
+	$scope.rows = 8;
+	$scope.cols = 8;
+	$scope.mines = 40;
+
 	$scope.gamesLoaded = false;
 
 	$scope.game = {};
-	$scope.gameState = '';
 	$scope.timeSpent = '';
+	$scope.time = '';
 	$scope.showGames = false;
 	$scope.showNewGame = false;
 	$scope.userLogged = false;
 	$scope.disableBoardConfiguration = false;
+	$scope.gameOver = false;
 
-	$scope.handleError = function(response) {
-		let msg = response.data.message;
-		if (response.status === -1) {
-			alert('Destination unreachable.');
-		} else if (msg != undefined || msg != '') {
-			alert(msg);
-		} else {
-			alert('Internal Error');
-		}
-	};
+	$scope.register = function() {
+		let data = JSON.stringify({userName: $scope.username, password: $scope.password});
+
+		$http.post(configSettings.createUserApiEndpoint, data).then(function (response) {
+			$scope.userId = response.data.id;
+			$scope.loadUserGames();
+			$scope.userLogged = true;
+		}, function (response) {
+			$scope.handleError(response, true);
+		});
+	}
+
+	$scope.login = function() {
+		let data = JSON.stringify({userName: $scope.username, password: $scope.password});
+		$http.post(configSettings.authenticateUserApiEndpoint, data).then(function (response) {
+			$scope.userId = response.data.userId;
+			$scope.userLogged = true;
+			$scope.loadUserGames();
+		}, 
+		function(response) {
+			$scope.handleError(response);
+		});
+	}
+	
+	$scope.logout = function() {
+		$scope.restart();
+	}
+
+	$scope.loadUserGames = function() {
+		$http.get(configSettings.userGamesApiEndpoint + $scope.userId).then(function (response) {
+				$scope.games = response.data;
+				$scope.showGames = $scope.games.length > 0;
+				$scope.showNewGame = !$scope.showGames;
+			}, 
+			function(response) {
+				$scope.handleError(response);
+			}
+		);
+	}
 
 	$scope.startGame = function() {
 		$scope.timeSpent = '';
-		$scope.loadingGame = true;
+		$scope.gameOver = false;
 
-		let data = JSON.stringify({userName: $scope.username, rows: $scope.rows, cols: $scope.cols, mines: $scope.mines});
+		let data = JSON.stringify({userId: $scope.userId, rows: $scope.rows, cols: $scope.cols, mines: $scope.mines});
 
 		$http.post(configSettings.startGameApiEndpoint, data).then(function (response) {
 			$scope.game = response.data;
 			console.log($scope.game.board);
-			$scope.gameState = 'Game ongoing';
+			$scope.gameId = $scope.game.gameId;
 			$scope.gameStarted = true;
-			$scope.loadingGame = false;
+			$scope.startTimer();
 		}, function (response) {
 			$scope.handleError(response, true);
-			$scope.loadingGame = false;
 		});
 	};
 
 	$scope.cellClick = function(e, row, col) {
+		if($scope.gameOver) return;
+
 		e = e || window.event;
 		
-		let data = JSON.stringify({userName: $scope.username, row: row, column: col});
-
-		$scope.gameState = 'Playing the game!';
+		let data = JSON.stringify({gameId: $scope.gameId, row: row, column: col});
 
 		if(e.which == 3) { //flag
 			$http.post(configSettings.addFlagApiEndpoint, data).then(function (response) {
@@ -70,34 +102,26 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 				console.log($scope.game.board);
 			}, function (response) {
 				$scope.handleError(response, true);
-				$scope.loadingGame = false;
 			});
 		} else {
-			let data = JSON.stringify({userName: $scope.username, row: row, column: col});
 			$http.post(configSettings.playGameApiEndpoint, data).then(function (response) {
 				$scope.game = response.data;
-				if ($scope.game.state == 'LOST' || $scope.game.state == 'VICTORY') {
-					if($scope.game.state == 'LOST') { 
-						alert("Sorry but you loss!!");
-						$scope.gameState = 'Game over. You loss!';
-					} else {
+				if(! $scope.game.active) {
+					if($scope.game.userWon) {
 						$scope.gameState = 'Game over. You win!';
 						alert("Victory, your are the best!");
+					} else {
+						alert("Sorry but you loss!!");
+						$scope.gameState = 'Game over. You loss!';
 					}
-					let res = Math.abs(new Date($scope.game.endTime) - new Date($scope.game.startTime)) / 1000;
-					let hours = Math.floor(res / 3600) % 24;  
-					let minutes = Math.floor(res / 60) % 60;
-					let seconds = Math.floor(res % 60);  
-					$scope.timeSpent = hours + "HH " + minutes + "MM "+ seconds + "SS";
 					$scope.disableBoardConfiguration = false;
+					$scope.gameOver = true;
+					$scope.stopTimer();
 				}
 			}, function (response) {
 				$scope.handleError(response, true);
-				$scope.loadingGame = false;
 			});
-		}
-		
-		
+		}	
 	};
 
 	$scope.restart = function() {
@@ -128,40 +152,57 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 		);
 	}
 
-	$scope.loadUserGames = function() {
-		$http.get(configSettings.userGamesApiEndpoint + $scope.username).then(function (response) {
-				$scope.games = response.data;
-				$scope.showGames = $scope.games.length > 0;
-				$scope.showNewGame = !$scope.showGames;
-			}, 
-			function(response) {
-				$scope.handleError(response);
-			}
-		);
-	}
-
-	$scope.login = function() {
-		$scope.userLogged = true;
-		$scope.loadUserGames();
-	}
-	
-	$scope.logout = function() {
-		$scope.restart();
-	}
-
 	$scope.resume = function(gameId) {
-		$http.get(configSettings.gameApiEndpoint + gameId).then(function (response) {
+		$scope.gameId = gameId;
+		$http.get(configSettings.gamesApiEndpoint + gameId).then(function (response) {
 				$scope.game = response.data;
 				$scope.showGames = false;
 				$scope.showNewGame = !$scope.showGames;
 				$scope.disableBoardConfiguration = true;
 				$scope.rows = $scope.game.board.length;
 				$scope.cols = $scope.game.board[0].length;
+				$scope.startTimer();
 			}, 
 			function(response) {
 				$scope.handleError(response);
 			}
 		);
 	}
+
+	$scope.handleError = function(response) {
+		let msg = response.data.message;
+		if (msg != undefined || msg != '') {
+			alert(msg);
+		} else {
+			alert('Internal Error');
+		}
+	};
+
+	$scope.stopTimer = function() {
+		if ($scope.timerInterval !== undefined) {
+			$interval.cancel($scope.timerInterval);
+			$scope.time = '';
+		}
+	};
+	
+	$scope.startTimer = function() {
+		$scope.timerInterval = $interval(function() {
+			let d = $scope.time;
+			d = Number(d);
+			var h = Math.floor(d / 3600);
+			var m = Math.floor(d % 3600 / 60);
+			var s = Math.floor(d % 3600 % 60);
+		
+			var hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours, ") : "";
+			var mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes, ") : "";
+			var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+			
+			$scope.timeSpent = hDisplay + mDisplay + sDisplay; 
+
+			$scope.time++;
+
+		}, 1000);
+	};
+
 });
 })(window.angular);
