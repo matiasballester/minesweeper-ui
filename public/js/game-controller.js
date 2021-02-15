@@ -57,6 +57,7 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 	}
 	
 	$scope.logout = function() {
+		$scope.stopTimer();
 		$scope.restart();
 	}
 
