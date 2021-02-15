@@ -55,7 +55,15 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 			$scope.handleError(response);
 		});
 	}
-	
+
+	$scope.history = function() {
+		$scope.showGames = true;
+		$scope.showNewGame = false;
+		$scope.timeSpent = '';
+		$scope.stopTimer();
+		$scope.loadUserGames();
+	}
+
 	$scope.logout = function() {
 		$scope.stopTimer();
 		$scope.restart();
@@ -81,7 +89,6 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 
 		$http.post(configSettings.startGameApiEndpoint, data).then(function (response) {
 			$scope.game = response.data;
-			console.log($scope.game.board);
 			$scope.gameId = $scope.game.gameId;
 			$scope.gameStarted = true;
 			$scope.startTimer();
@@ -160,8 +167,9 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 				$scope.showGames = false;
 				$scope.showNewGame = !$scope.showGames;
 				$scope.disableBoardConfiguration = true;
-				$scope.rows = $scope.game.board.length;
-				$scope.cols = $scope.game.board[0].length;
+				$scope.rows = $scope.game.rows;
+				$scope.cols = $scope.game.cols;
+				$scope.mines = $scope.game.mines;
 				$scope.startTimer();
 			}, 
 			function(response) {
@@ -182,11 +190,13 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 	$scope.stopTimer = function() {
 		if ($scope.timerInterval !== undefined) {
 			$interval.cancel($scope.timerInterval);
+			$scope.timeSpent = '';
 			$scope.time = '';
 		}
 	};
 	
 	$scope.startTimer = function() {
+		$scope.timeSpent = '';
 		$scope.timerInterval = $interval(function() {
 			let d = $scope.time;
 			d = Number(d);
@@ -199,9 +209,7 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 			var sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
 			
 			$scope.timeSpent = hDisplay + mDisplay + sDisplay; 
-
 			$scope.time++;
-
 		}, 1000);
 	};
 
