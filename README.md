@@ -15,7 +15,7 @@ AngularJS 1.8.2
 To be able to run it locally plase make sure you have [Node.js](http://nodejs.org/)
 
 ```sh
-$ git clone https://github.com/matiasballester/minesweeper-ui.git# or clone your own fork
+$ git clone https://github.com/matiasballester/minesweeper-ui.git or clone your own fork
 $ cd minesweeper-ui
 $ npm install
 $ npm start
