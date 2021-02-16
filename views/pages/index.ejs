@@ -101,6 +101,13 @@
                                     <span ng-show="timeSpent" style="margin-left: 5px;" class="badge badge-light"><i class="fas fa-stopwatch"></i> {{timeSpent}}</span>
                                 </div>
                             </div>
+                            <div class="row" style="margin: 10px;">
+                                <div class="col-md-10" style="text-align: left; margin-left: 100px;">
+                                    <i class="fas fa-flag"></i> <input type="radio" ng-model="flagSelected" value="flag"></input>
+                                    &nbsp;&nbsp;
+                                    <i class="fas fa-question-circle"></i> <input type="radio" ng-model="flagSelected" value="questionMark"></input>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <hr class="my-4">
@@ -113,7 +120,8 @@
                                         ng-class="{mine: col.revealed == true && col.mined == true,
                                                     revealed: col.revealed == true, 
                                                     notrevealed: col.revealed == false, 
-                                                    flagged: col.revealed == false && col.flagged == true}" 
+                                                    flagged: col.revealed == false && col.flagged == true,
+                                                    questionMarked: col.revealed == false && col.questionMark == true}"
                                         ng-mouseup="cellClick($event, col.row, col.col)"
                                         oncontextmenu="return false">
                                         <span ng-if="col.revealed == true && col.minesNear > 0 && col.mined == false">{{col.minesNear}}</span>

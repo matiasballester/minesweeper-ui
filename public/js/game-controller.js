@@ -4,6 +4,7 @@ app.constant('configSettings', {
 	'authenticateUserApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/authenticateUser/',
 	'startGameApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/startGame',
 	'addFlagApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/addFlag',
+	'addQuestionMarkApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/addQuestionMark',
 	'playGameApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/playGame',
 	'gamesApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/games/',
 	'userGamesApiEndpoint': 'https://mballester-minesweeper-api.herokuapp.com/minesweeper/games/users/'
@@ -33,6 +34,7 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 	$scope.gameOver = false;
 	$scope.displayingAllGames = false;
 	$scope.loading = false;
+	$scope.flagSelected = 'flag';
 
 	$scope.register = function() {
 		let data = JSON.stringify({userName: $scope.username, password: $scope.password});
@@ -130,8 +132,9 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 		
 		let data = JSON.stringify({gameId: $scope.gameId, row: row, column: col});
 
-		if(e.which == 3) { //flag
-			$http.post(configSettings.addFlagApiEndpoint, data).then(function (response) {
+		if(e.which == 3) { //add flag or question mark
+			let endpoint = ($scope.flagSelected === 'flag') ? configSettings.addFlagApiEndpoint : configSettings.addQuestionMarkApiEndpoint;
+			$http.post(endpoint, data).then(function (response) {
 				$scope.game = response.data;
 				console.log($scope.game.board);
 			}, function (response) {
