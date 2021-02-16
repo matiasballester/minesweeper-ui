@@ -8,7 +8,7 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 	</head>
 	<body ng-app="ngAppMinesweeperGame">
-		<div class="container" ng-controller="ngAppMinesweeperGameController">
+		<div class="container" ng-controller="ngAppMinesweeperGameController" ng-show="appLoaded">
             <div style="margin-bottom: 40px; margin-left: 20px;">
                 <div class="text-left">
                     <h1 class="display-4">Minesweeper <i class="fa fa-bomb" style="font-size:36px"></i></h1>
@@ -27,9 +27,9 @@
                 </div>
                 <div class="row">
                     <div class="col-md-10">  
-                        <button ng-show="!userLogged" ng-click="login()" class="btn btn-success btn-sm">Login</button>
-                        <button ng-show="!userLogged" ng-click="register()" class="btn btn-link btn-sm">Register</button>
-                        <button ng-show="userLogged" ng-click="logout()" class="btn btn-danger btn-sm">Logout</button>
+                        <button ng-show="!userLogged" ng-disabled="loading == true" ng-click="login()" class="btn btn-success btn-sm">Login</button>
+                        <button ng-show="!userLogged" ng-disabled="loading == true" ng-click="register()" class="btn btn-link btn-sm">Register</button>
+                        <button ng-show="userLogged" ng-disabled="loading" ng-click="logout()" class="btn btn-danger btn-sm">Logout</button>
                     </div>
                 </div>
 			</div>
@@ -98,9 +98,7 @@
                                 <div class="col-md-10" style="text-align: left; margin-left: 100px;">
                                     <button ng-click="startGame()" ng-disabled="disableBoardConfiguration" style="padding: 0px 5px;" class="btn btn-primary">Start game</button>
                                     <button ng-click="history()" style="padding: 0px 5px;" class="btn btn-link">History</button>
-                                    <button ng-show="timeSpent" type="button" class="btn btn-info btn-sm">
-                                        <i class="fas fa-stopwatch"></i><span style="margin-left: 5px;" class="badge badge-light">{{timeSpent}}</span>
-                                      </button>
+                                    <span ng-show="timeSpent" style="margin-left: 5px;" class="badge badge-light"><i class="fas fa-stopwatch"></i> {{timeSpent}}</span>
                                 </div>
                             </div>
                         </div>
