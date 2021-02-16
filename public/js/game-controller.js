@@ -20,7 +20,7 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 
 	$scope.rows = 10;
 	$scope.cols = 10;
-	$scope.mines = 10;
+	$scope.mines = 50;
 
 	$scope.gamesLoaded = false;
 
