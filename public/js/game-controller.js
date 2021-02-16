@@ -18,9 +18,9 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 	$scope.userId = '';
 	$scope.gameId = '';
 
-	$scope.rows = 8;
-	$scope.cols = 8;
-	$scope.mines = 40;
+	$scope.rows = 10;
+	$scope.cols = 10;
+	$scope.mines = 10;
 
 	$scope.gamesLoaded = false;
 
@@ -191,15 +191,6 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 		);
 	}
 
-	$scope.handleError = function(response) {
-		let msg = response.data.message;
-		if (msg != undefined || msg != '') {
-			alert(msg);
-		} else {
-			alert('Internal Error');
-		}
-	};
-
 	$scope.stopTimer = function() {
 		if ($scope.timerInterval !== undefined) {
 			$interval.cancel($scope.timerInterval);
@@ -223,6 +214,20 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 			$scope.timeSpent = hDisplay + mDisplay + sDisplay; 
 			$scope.time++;
 		}, 1000);
+	};
+
+	$scope.handleError = function(response) {
+		if(response.data != null) {
+			let msg = response.data.message;
+			if (msg != undefined || msg != '') {
+				alert(msg);
+			} else {
+				alert('Internal Error');
+			}
+		} else {
+			alert('Backend server down');
+		}
+
 	};
 
 	$scope.appLoaded = true;
