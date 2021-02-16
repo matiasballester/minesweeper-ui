@@ -23,6 +23,8 @@ $ npm start
 
 Your app should now be running on [localhost:3000](http://localhost:3000/).
 
+Please click here to play the heroku version: https://mballester-minesweeper-ui.herokuapp.com
+
 
 
  
