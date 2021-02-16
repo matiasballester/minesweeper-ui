@@ -31,6 +31,7 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 	$scope.userLogged = false;
 	$scope.disableBoardConfiguration = false;
 	$scope.gameOver = false;
+	$scope.displayingAllGames = false;
 
 	$scope.register = function() {
 		let data = JSON.stringify({userName: $scope.username, password: $scope.password});
@@ -70,6 +71,7 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 	}
 
 	$scope.loadUserGames = function() {
+		$scope.displayingAllGames = false;
 		$http.get(configSettings.userGamesApiEndpoint + $scope.userId).then(function (response) {
 				$scope.games = response.data;
 				$scope.showGames = $scope.games.length > 0;
@@ -151,6 +153,7 @@ angular.module('ngAppMinesweeperGame', ['configSettings']).controller('ngAppMine
 	}
 
 	$scope.loadGames = function() {
+		$scope.displayingAllGames = true;
 		$http.get(configSettings.gamesApiEndpoint).then(function (response) {
 				$scope.games = response.data;
 			}, 

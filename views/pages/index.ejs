@@ -37,11 +37,14 @@
                 <div ng-show="showGames" class="" id="games">
                     <div class="col-md-10" style="text-align: left; margin-bottom: 10px;">
                         <button ng-click="newConfiguration()" style="padding: 0px 5px;" class="btn btn-primary">Configure a new game</button>
+                        <button ng-show="!displayingAllGames" ng-click="loadGames()" style="margin-left: 5px; padding: 0px 5px;" class="btn btn-link">See all user games</button>
+                        <button ng-show="displayingAllGames" ng-click="loadUserGames()" style="margin-left: 5px; padding: 0px 5px;" class="btn btn-link">See my games</button>
                     </div>
                     <div class="row">
                         <table class="table">
                             <thead>
                                 <tr>
+                                    <th scope="col">Nickname</th>
                                     <th scope="col">Configuration</th>
                                     <th scope="col">Start Date</th>
                                     <th scope="col">End Date</th>
@@ -52,6 +55,7 @@
                             </thead>
                             <tbody>
                                 <tr scope="row" ng-repeat="game in games">
+                                    <td>{{game.userName}}</td>
                                     <td>Rows: {{game.rows}}, Cols: {{game.cols}}, Mines: {{game.mines}}</td>
                                     <td>{{game.startTime}}</td>
                                     <td>{{game.endTime}}</td>
@@ -59,12 +63,12 @@
                                     <td ng-show="game.active">Active</td>
                                     <td ng-show="!game.active && game.userWon"><i class="fas fa-laugh-beam" style="font-size:36px" title="{{game.status}}"></i></td>
                                     <td ng-show="!game.active && !game.userWon"><i class="fas fa-sad-cry" style="font-size:36px" title="{{game.status}}"></i></td>
-                                    <td><a ng-if="game.active" href="#" ng-click="resume(game.gameId)">resume</a></td>
+                                    <td><a ng-if="game.active && game.userId == userId" href="#" ng-click="resume(game.gameId)">resume</a></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <hr class="my-4">
+                    <hr class="my-4"/>
                 </div>
                 <div ng-show="showNewGame" class="" style="margin-top: 30px;" id="newGame">
                     <div class="row">
