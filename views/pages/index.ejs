@@ -29,110 +29,112 @@
                     <div class="col-md-10">  
                         <button ng-show="!userLogged" ng-disabled="loading == true" ng-click="login()" class="btn btn-success btn-sm">Login</button>
                         <button ng-show="!userLogged" ng-disabled="loading == true" ng-click="register()" class="btn btn-link btn-sm">Register</button>
+                        <div ng-show="loading" class="spinner-border text-secondary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
                         <button ng-show="userLogged" ng-disabled="loading" ng-click="logout()" class="btn btn-danger btn-sm">Logout</button>
                     </div>
                 </div>
 			</div>
-                <hr class="my-4">
-                <div ng-show="showGames" class="" id="games">
-                    <div class="col-md-10" style="text-align: left; margin-bottom: 10px;">
-                        <button ng-click="newConfiguration()" style="padding: 0px 5px;" class="btn btn-primary">Configure a new game</button>
-                        <button ng-show="!displayingAllGames" ng-click="loadGames()" style="margin-left: 5px; padding: 0px 5px;" class="btn btn-link">See all user games</button>
-                        <button ng-show="displayingAllGames" ng-click="loadUserGames()" style="margin-left: 5px; padding: 0px 5px;" class="btn btn-link">See my games</button>
-                    </div>
-                    <div class="row">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Nickname</th>
-                                    <th scope="col">Configuration</th>
-                                    <th scope="col">Start Date</th>
-                                    <th scope="col">End Date</th>
-                                    <th scope="col">Duration</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr scope="row" ng-repeat="game in games">
-                                    <td>{{game.userName}}</td>
-                                    <td>Rows: {{game.rows}}, Cols: {{game.cols}}, Mines: {{game.mines}}</td>
-                                    <td>{{game.startTime}}</td>
-                                    <td>{{game.endTime}}</td>
-                                    <td>{{game.timeSpent}}</td>
-                                    <td ng-show="game.active">Active</td>
-                                    <td ng-show="!game.active && game.userWon"><i class="fas fa-laugh-beam" style="font-size:36px" title="{{game.status}}"></i></td>
-                                    <td ng-show="!game.active && !game.userWon"><i class="fas fa-sad-cry" style="font-size:36px" title="{{game.status}}"></i></td>
-                                    <td><a ng-if="game.active && game.userId == userId" href="#" ng-click="resume(game.gameId)">resume</a></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <hr class="my-4"/>
+            <hr class="my-4"/>
+            <div ng-show="showGames" class="" id="games">
+                <div class="col-md-10" style="text-align: left; margin-bottom: 10px;">
+                    <button ng-click="newConfiguration()" style="padding: 0px 5px;" class="btn btn-primary">Configure a new game</button>
+                    <button ng-show="!displayingAllGames" ng-click="loadGames()" style="margin-left: 5px; padding: 0px 5px;" class="btn btn-link">See all user games</button>
+                    <button ng-show="displayingAllGames" ng-click="loadUserGames()" style="margin-left: 5px; padding: 0px 5px;" class="btn btn-link">See my games</button>
                 </div>
-                <div ng-show="showNewGame" class="" style="margin-top: 10px;" id="newGame">
-                    <div class="row">
-                        <div class="container" style="margin-top: 10px;">
-                            <div class="row" style="margin-bottom: 20px;">
-                                <p class="font-weight-bold">Configure your board</p>
+                <div class="row">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nickname</th>
+                                <th scope="col">Configuration</th>
+                                <th scope="col">Start Date</th>
+                                <th scope="col">End Date</th>
+                                <th scope="col">Duration</th>
+                                <th scope="col">Status</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr scope="row" ng-repeat="game in games">
+                                <td>{{game.userName}}</td>
+                                <td>Rows: {{game.rows}}, Cols: {{game.cols}}, Mines: {{game.mines}}</td>
+                                <td>{{game.startTime}}</td>
+                                <td>{{game.endTime}}</td>
+                                <td>{{game.timeSpent}}</td>
+                                <td ng-show="game.active">Active</td>
+                                <td ng-show="!game.active && game.userWon"><i class="fas fa-laugh-beam" style="font-size:36px" title="{{game.status}}"></i></td>
+                                <td ng-show="!game.active && !game.userWon"><i class="fas fa-sad-cry" style="font-size:36px" title="{{game.status}}"></i></td>
+                                <td><a ng-if="game.active && game.userId == userId" href="#" ng-click="resume(game.gameId)">resume</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr class="my-4"/>
+            </div>
+            <div ng-show="showNewGame" class="" style="margin-top: 10px;" id="newGame">
+                <div class="row">
+                    <div class="container" style="margin-top: 10px;">
+                        <div class="row" style="margin-bottom: 20px;">
+                            <p class="font-weight-bold">Configure your board</p>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div style="width: 100px; margin-right: 2px;">
+                                Rows:
                             </div>
-                            <div class="row" style="margin-top: 5px;">
-                                <div style="width: 100px; margin-right: 2px;">
-                                    Rows:
-                                </div>
-                                <div class="col-md-10"><input type="number" ng-disabled="disableBoardConfiguration" class="form-control" style="width: 100px;" ng-model="rows"/></div>
+                            <div class="col-md-10"><input type="number" ng-disabled="disableBoardConfiguration" class="form-control" style="width: 100px;" ng-model="rows"/></div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div style="width: 100px; margin-right: 2px;">
+                                Columns:
                             </div>
-                            <div class="row" style="margin-top: 5px;">
-                                <div style="width: 100px; margin-right: 2px;">
-                                    Columns:
-                                </div>
-                                <div class="col-md-10"><input type="number" ng-disabled="disableBoardConfiguration" class="form-control" style="width: 100px;" ng-model="cols"/></div>
+                            <div class="col-md-10"><input type="number" ng-disabled="disableBoardConfiguration" class="form-control" style="width: 100px;" ng-model="cols"/></div>
+                        </div>
+                        <div class="row" style="margin-top: 5px;">
+                            <div style="width: 100px; margin-right: 2px;">
+                                Mines:
                             </div>
-                            <div class="row" style="margin-top: 5px;">
-                                <div style="width: 100px; margin-right: 2px;">
-                                    Mines:
-                                </div>
-                                <div class="col-md-10"><input type="number" ng-disabled="disableBoardConfiguration" class="form-control" style="width: 100px;" ng-model="mines"/></div>
+                            <div class="col-md-10"><input type="number" ng-disabled="disableBoardConfiguration" class="form-control" style="width: 100px;" ng-model="mines"/></div>
+                        </div>
+                        <div class="row" style="margin: 10px;">
+                            <div class="col-md-10" style="text-align: left; margin-left: 100px;">
+                                <button ng-click="startGame()" ng-disabled="disableBoardConfiguration" style="padding: 0px 5px;" class="btn btn-primary">Start game</button>
+                                <button ng-click="history()" style="padding: 0px 5px;" class="btn btn-link">History</button>
+                                <span ng-show="timeSpent" style="margin-left: 5px;" class="badge badge-light"><i class="fas fa-stopwatch"></i> {{timeSpent}}</span>
                             </div>
-                            <div class="row" style="margin: 10px;">
-                                <div class="col-md-10" style="text-align: left; margin-left: 100px;">
-                                    <button ng-click="startGame()" ng-disabled="disableBoardConfiguration" style="padding: 0px 5px;" class="btn btn-primary">Start game</button>
-                                    <button ng-click="history()" style="padding: 0px 5px;" class="btn btn-link">History</button>
-                                    <span ng-show="timeSpent" style="margin-left: 5px;" class="badge badge-light"><i class="fas fa-stopwatch"></i> {{timeSpent}}</span>
-                                </div>
-                            </div>
-                            <div class="row" style="margin: 10px;">
-                                <div class="col-md-10" style="text-align: left; margin-left: 100px;">
-                                    <i class="fas fa-flag"></i> <input type="radio" ng-model="flagSelected" value="flag"></input>
-                                    &nbsp;&nbsp;
-                                    <i class="fas fa-question-circle"></i> <input type="radio" ng-model="flagSelected" value="questionMark"></input>
-                                </div>
+                        </div>
+                        <div class="row" style="margin: 10px;">
+                            <div class="col-md-10" style="text-align: left; margin-left: 100px;">
+                                <i class="fas fa-flag"></i> <input type="radio" ng-model="flagSelected" value="flag"></input>
+                                &nbsp;&nbsp;
+                                <i class="fas fa-question-circle"></i> <input type="radio" ng-model="flagSelected" value="questionMark"></input>
                             </div>
                         </div>
                     </div>
-                    <hr class="my-4"/>
-                    <div class="row" style="margin-top: 40px;">
-                        <table id="board" class="game-table">
-                            <tbody>
-                                <tr ng-repeat="row in game.board">
-                                    <td height="40px" width="40px" 
-                                        ng-repeat="col in row" 
-                                        ng-class="{mine: col.revealed == true && col.mined == true,
-                                                    revealed: col.revealed == true, 
-                                                    notrevealed: col.revealed == false, 
-                                                    flagged: col.revealed == false && col.flagged == true,
-                                                    questionMarked: col.revealed == false && col.questionMark == true}"
-                                        ng-mouseup="cellClick($event, col.row, col.col)"
-                                        oncontextmenu="return false">
-                                        <span ng-if="col.revealed == true && col.minesNear > 0 && col.mined == false">{{col.minesNear}}</span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <hr class="my-4"/>
                 </div>
-            </div>    
+                <hr class="my-4"/>
+                <div class="row" style="margin-top: 40px;">
+                    <table id="board" class="game-table">
+                        <tbody>
+                            <tr ng-repeat="row in game.board">
+                                <td height="40px" width="40px"
+                                    ng-repeat="col in row"
+                                    ng-class="{mine: col.revealed == true && col.mined == true,
+                                                revealed: col.revealed == true,
+                                                notrevealed: col.revealed == false,
+                                                flagged: col.revealed == false && col.flagged == true,
+                                                questionMarked: col.revealed == false && col.questionMark == true}"
+                                    ng-mouseup="cellClick($event, col.row, col.col)"
+                                    oncontextmenu="return false">
+                                    <span ng-if="col.revealed == true && col.minesNear > 0 && col.mined == false">{{col.minesNear}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr class="my-4"/>
+            </div>
 		</div>
 	</body>
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
